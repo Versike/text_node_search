@@ -24,9 +24,22 @@ def extract_text_pdf(path):
     return text
 
 def articles_splitter(text):
+    split_by_UDK = re.split(r'УДК ', text)
     articles = []
-    for match in re.findall(r'(?<=УДК \d\d\d)[\s\S]*?(?=УДК)', text):
-        articles.append(clean_text(match))
+    for article in range(2, len(split_by_UDK) - 1):  #  0,1 elements of array are not articles
+        author = split_by_UDK[article][::-1]
+        _temp = re.split(r'\d{2,3}', author)  #  has article for extract author
+        author = re.findall(r'[А-ЯA-Z]\. ?[А-Я-A-Z]\.? [А-Яа-я]+', _temp[0][::-1])  #  take I.O.Familya with regex
+        _temp = re.split(r'Аннотация', split_by_UDK[article + 1])
+        title = re.sub(r'[^\w\s]+|[\d]+', r'', _temp[0]).replace('\n', ' ').strip()  #  regex to extract title
+        _temp = _temp[1].lower()
+        _temp = _temp.split(". ")
+        articleText = []
+        for i in _temp:
+            i = " ".join(clean_text(i).split())
+            if len(i) > 3:
+                articleText.append(i)
+        articles.append([author, title, articleText])
     return articles
 
 def clean_text(text):

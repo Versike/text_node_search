@@ -50,4 +50,5 @@ def clean_text(text):
     text = re.sub(regular_url, r'URL', text)
     text = re.sub(r'(\d+\s\d+)|(\d+)',' NUM ', text)
     text = re.sub(r'\s+', ' ', text)
+    text = re.sub('(\\b[А-Яа-я] \\b|\\b [А-Яа-я]\\b)', '', text)
     return text
